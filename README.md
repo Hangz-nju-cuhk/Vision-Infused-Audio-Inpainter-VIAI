@@ -25,12 +25,13 @@ Please wait for more details.
 The use of this software is RESTRICTED to **non-commercial research and educational purposes**.
 
 ```
-@inproceedings{zhou2019vision,
-  title={Vision-Infused Deep Audio Inpainting},
-  author={Zhou, Hang and Liu, Ziwei and Xu, Xudong and Luo, Ping and Wang, Xiaogang},
-  booktitle={International Conference on Computer Vision (ICCV)},
-  year={2019}
-}
+@InProceedings{Zhou_2019_ICCV,
+  author = {Zhou, Hang and Liu, Ziwei and Xu, Xudong and Luo, Ping and Wang, Xiaogang},
+  title = {Vision-Infused Deep Audio Inpainting},
+  booktitle = {The IEEE International Conference on Computer Vision (ICCV)},
+  month = {October},
+ year = {2019}
+} 
 ```
 
 ## Acknowledgement

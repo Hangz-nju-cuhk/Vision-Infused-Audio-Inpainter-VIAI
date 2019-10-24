@@ -97,28 +97,6 @@ def FlowResnet18(hparams=hparams):
     return model
 
 
-
-def ImageResnet50(hparams=hparams):
-    model = ResNet(Bottleneck, [3, 4, 6, 3], channel_size=3, length_feature=hparams.length_feature)
-    if hparams.resnet_pretrain:
-        pretrain = torch.load(hparams.resnet_pretrain_path)
-        util.copy_state_dict(pretrain, model)
-    return model
-
-
-def FlowResnet50(hparams=hparams):
-    model = ResNet(Bottleneck, [3, 4, 6, 3], channel_size=2, length_feature=hparams.length_feature)
-    if hparams.resnet_pretrain:
-        pretrain = torch.load(hparams.resnet_pretrain_path)
-        model = util.copy_state_dict(pretrain, model)
-        conv1_weight = pretrain["conv1.weight"].data
-        flow_conv1_weight = conv1_weight.mean(1).float()
-        flow_conv1_weight = flow_conv1_weight.unsqueeze(1)
-        flow_conv1_weight = flow_conv1_weight.expand([64, 2, 7, 7]).contiguous()
-        model.conv1.weight.data = flow_conv1_weight
-    return model
-
-
 class ImageEmbedding(nn.Module):
 
     def __init__(self, hparams=hparams):
