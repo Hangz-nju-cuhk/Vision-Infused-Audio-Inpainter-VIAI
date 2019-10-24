@@ -30,7 +30,7 @@ The use of this software is RESTRICTED to **non-commercial research and educatio
   title = {Vision-Infused Deep Audio Inpainting},
   booktitle = {The IEEE International Conference on Computer Vision (ICCV)},
   month = {October},
- year = {2019}
+  year = {2019}
 } 
 ```
 
