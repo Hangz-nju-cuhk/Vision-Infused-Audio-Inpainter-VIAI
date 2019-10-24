@@ -197,47 +197,6 @@ class MelDecoderImage2(nn.Module):
         self.deconv1_1_1.weight.data = deconv1weight.view(512, 256, 3, 3)
 
 
-class MelDecoder2(nn.Module):
-    def __init__(self, hparams=hparams, norm_layer=hparams.normlayer):
-        super(MelDecoder2, self).__init__()
-        self.relu = nn.ReLU(True)
-        self.hparams = hparams
-        self.deconv1_1 = nn.ConvTranspose2d(256, 256, 3, 1, (0, 1))
-        self.deconv1_1_bn = norm_layer(256)
-        self.deconv1_2 = nn.ConvTranspose2d(256, 256, 3, 1, 1)
-        self.deconv1_2_bn = norm_layer(256)
-        self.convblock1 = TransConvBlock(256, 256, "1", nums=2, norm_layer=norm_layer)
-        self.convblock2 = TransConvBlock(256, 128, "2", nums=3, norm_layer=norm_layer)
-        self.convblock3 = TransConvBlock(128, 64, "3", nums=3, norm_layer=norm_layer)
-        self.convblock4 = TransConvBlock(64, 32, "4", nums=3, norm_layer=norm_layer)
-        self.convblock5 = TransConvBlock(32, 32, "5", nums=2, norm_layer=norm_layer)
-        self.conv6_1 = nn.ConvTranspose2d(32, 32, 3, 1, 1)
-        self.conv6_2 = nn.ConvTranspose2d(32, 1, 3, 1, 1)
-        self.conv6_1_bn = norm_layer(32)
-        self.relu = nn.ReLU(True)
-        self.sig = nn.Sigmoid()
-        self.orig_size = [hparams.cin_channels, hparams.max_mel_lengths]
-        self.upsample_mode = 'bilinear'
-
-    def forward(self, net, x_size):
-        out = self.deconv1_1(net[-1])
-        out = self.deconv1_1_bn(out)
-        out = self.relu(out)
-        out = self.deconv1_2(out)
-        out = self.relu(self.deconv1_2_bn(out))
-        for i in range(1, len(net)):
-
-            out = F.interpolate(out, size=[net[-1 - i].size(2), net[-1 - i].size(3)], mode=self.upsample_mode, align_corners=True)
-            # out = F.upsample(out, size=[net[-1 - i].size(2), net[-1 - i].size(3)], mode=self.upsample_mode, align_corners=True)
-            out = self._modules['convblock' + str(i + 1)](out)
-        out = F.interpolate(out, size=[x_size[2], x_size[3]], mode=self.upsample_mode, align_corners=True)
-        # out = F.upsample(out, size=[x_size[2], x_size[3]], mode=self.upsample_mode, align_corners=True)
-        out = self.conv6_1(out)
-        out = self.relu(self.conv6_1_bn(out))
-        out = self.conv6_2(out)
-        out = self.sig(out)
-        return out
-
 
 class MelDecoder_old(nn.Module):
     def __init__(self, hparams=hparams, norm_layer=hparams.normlayer):
@@ -283,51 +242,3 @@ class MelDecoder_old(nn.Module):
         return out
 
 
-class MelDecoderImage_old(nn.Module):
-    def __init__(self, hparams=hparams, norm_layer=hparams.normlayer):
-        super(MelDecoderImage_old, self).__init__()
-        self.relu = nn.ReLU(True)
-        self.hparams = hparams
-        self.deconv1_1 = nn.ConvTranspose2d(256, 256, 3, 1, (0, 1))
-        self.deconv1_1_bn = norm_layer(256)
-        self.deconv1_1_1 = nn.ConvTranspose2d(256 * 2, 256, 3, 1, (0, 1))
-        self.deconv1_1_1_bn = norm_layer(256)
-        self.deconv1_2 = nn.ConvTranspose2d(256, 256, 3, 1, 1)
-        self.deconv1_2_bn = norm_layer(256)
-        self.convblock2 = TransConvBlock(256, 128, "2", nums=3, norm_layer=norm_layer)
-        self.convblock3 = TransConvBlock(128, 64, "3", nums=3, norm_layer=norm_layer)
-        self.convblock4 = TransConvBlock(64 * 2, 32, "4", nums=3, norm_layer=norm_layer)
-        self.convblock5 = TransConvBlock(32, 32, "5", nums=2, norm_layer=norm_layer)
-        self.conv6_1 = nn.ConvTranspose2d(32, 32, 3, 1, 1)
-        self.conv6_2 = nn.ConvTranspose2d(32, 1, 3, 1, 1)
-        self.conv6_1_bn = norm_layer(32)
-        self.relu = nn.ReLU(True)
-        self.sig = nn.Sigmoid()
-        self.orig_size = [hparams.cin_channels, hparams.max_mel_lengths]
-        self.upsample_mode = 'bilinear'
-
-
-    def forward(self, net, x_size, video_net=None):
-        # out = self.deconv1_1(net[-1])
-        # out = self.deconv1_1_bn(out)
-        video_net = video_net.view(net[-1].size(0), -1, net[-1].size(2), net[-1].size(3))
-        input = torch.cat([net[-1], video_net], 1)
-        out = self.deconv1_1_1(input)
-        out = self.deconv1_1_1_bn(out)
-        out = self.relu(out)
-        out = self.deconv1_2(out)
-        out = self.relu(self.deconv1_2_bn(out))
-        for i in range(1, len(net)):
-            out = F.interpolate(out, size=[net[-1 - i].size(2), net[-1 - i].size(3)], mode=self.upsample_mode, align_corners=True)
-            # out = F.upsample(out, size=[net[-1 - i].size(2), net[-1 - i].size(3)], mode=self.upsample_mode, align_corners=True)
-            if i == 3:
-                out = torch.cat((out, net[-(i + 1)]), 1)
-
-            out = self._modules['convblock' + str(i + 1)](out)
-        out = F.interpolate(out, size=[x_size[2], x_size[3]], mode=self.upsample_mode, align_corners=True)
-        # out = F.upsample(out, size=[x_size[2], x_size[3]], mode=self.upsample_mode, align_corners=True)
-        out = self.conv6_1(out)
-        out = self.relu(self.conv6_1_bn(out))
-        out = self.conv6_2(out)
-        out = self.sig(out)
-        return out
