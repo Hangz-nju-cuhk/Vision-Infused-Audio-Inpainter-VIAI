@@ -15,6 +15,8 @@ We present a vision-infused method that can deal with both audio-only and audio-
 
 The MUSICES dataset can be accessed [here](https://hangz-nju-cuhk.github.io/projects/audio-inpainting/MUSICES.json).
 
+<img src='./misc/datastatistic.png' width=880>
+
 ## Training and Testing
 
 We are still sorting out the code. For now it is not complete thus not runable, but the architecture is revealed.
