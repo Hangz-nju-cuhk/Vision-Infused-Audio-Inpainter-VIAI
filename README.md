@@ -2,7 +2,7 @@
 
 We present a vision-infused method that can deal with both audio-only and audio-visual associated inpainting Inspired by image inpainting, called `Vision-Infused Audio Inpainter (VIAI)`.
 
-[[Project]](https://hangz-nju-cuhk.github.io/projects/AudioInpainting) [[Paper]](https://hangz-nju-cuhk.github.io/projects/audio-inpainting/Vision-Infused-Deep-Audio-Inpainting.pdf) [[Demo]](https://www.youtube.com/watch?v=2C8s_YuRRxk)
+[[Project]](https://hangz-nju-cuhk.github.io/projects/AudioInpainting) [[Paper]](https://arxiv.org/abs/1910.10997) [[Demo]](https://www.youtube.com/watch?v=2C8s_YuRRxk)
 
 <img src='./misc/pipeline2.png' width=880>
 
